@@ -29,7 +29,8 @@ public class AskDoctorPatient extends AppCompatActivity {
         patient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AskDoctorPatient.this,PatientLoginRegisterChoice.class));
+                startActivity(new Intent(AskDoctorPatient.this,PatientLoginRegisterChoice.class)
+                        .putExtra("UserType","PATIENT"));
                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });

@@ -29,8 +29,29 @@
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:layout_marginBottom="8dp"
-        android:textColor="@color/lightTextColor">
-    </TextView>
+        android:textColor="@color/lightTextColor"/>
+    <TextView
+        android:id="@+id/time"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="time: "
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/lightTextColor"/>
+    <TextView
+        android:id="@+id/date"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="date: "
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/lightTextColor"/>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/cancel"
         android:layout_width="wrap_content"

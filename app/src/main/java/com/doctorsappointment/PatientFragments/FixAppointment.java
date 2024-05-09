@@ -23,6 +23,7 @@ import com.doctorsappointment.ReusableFunctionsAndObjects;
 import java.util.Calendar;
 import java.util.HashMap;
 
+
 public class FixAppointment extends AppCompatActivity {
 
     private TextView date,time;
@@ -55,32 +56,35 @@ public class FixAppointment extends AppCompatActivity {
         t.setText("Address: "+addr);
         docid=getIntent().getStringExtra("DOCID");
         Calendar c= Calendar.getInstance();
-        y=c.get(Calendar.YEAR);
-        m=c.get(Calendar.MONTH);
-        d=c.get(Calendar.DAY_OF_MONTH);
-        h=c.get(Calendar.HOUR_OF_DAY);
-        min=c.get(Calendar.MINUTE);
-        date.setText(d+"/"+m+"/"+y);
+        y = c.get(Calendar.YEAR);
+        m = c.get(Calendar.MONTH);
+        d = c.get(Calendar.DAY_OF_MONTH);
+        h = c.get(Calendar.HOUR_OF_DAY);
+        min = c.get(Calendar.MINUTE);
+        date.setText(d + "/" + (m + 1) + "/" + y); // Note: Calendar.MONTH is zero-based, so add 1 to month
         if (h == 0) {
-            time.setText(h+":"+min);
-            time.setText("12"+":"+m+" AM");
+            time.setText("12" + ":" + (min < 10 ? "0" + min : min) + " AM"); // Add leading zero if minutes < 10
         } else if (h < 12) {
-            time.setText(h+":"+m+" AM");
+            time.setText(h + ":" + (min < 10 ? "0" + min : min) + " AM"); // Add leading zero if minutes < 10
         } else if (h == 12) {
-            time.setText(h+":"+m+" PM");
+            time.setText(h + ":" + (min < 10 ? "0" + min : min) + " PM"); // Add leading zero if minutes < 10
         } else {
-            time.setText((h-12)+":"+m+" PM");
+            time.setText((h - 12) + ":" + (min < 10 ? "0" + min : min) + " PM"); // Add leading zero if minutes < 10
         }
+
         AppCompatButton datebtn=findViewById(R.id.setdate);
         AppCompatButton timebtn=findViewById(R.id.settime);
         AppCompatButton setapp=findViewById(R.id.setappoinment);
+
         datebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog datePickerDialog=new DatePickerDialog(FixAppointment.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(FixAppointment.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        date.setText(dayOfMonth+"/"+month+"/"+year);
+                        // Adjust the month value by adding 1
+                        month += 1;
+                        date.setText(dayOfMonth + "/" + month + "/" + year);
                     }
                 }, y, m, d);
                 datePickerDialog.show();
@@ -179,3 +183,17 @@ public class FixAppointment extends AppCompatActivity {
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

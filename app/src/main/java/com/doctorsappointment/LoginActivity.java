@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatButton logInButton;
     private ProgressDialog progressDialog;
 
-    Intent intent = getIntent();
+    String userType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,119 +109,30 @@ public class LoginActivity extends AppCompatActivity {
         logInButton = findViewById(R.id.log_in);
         gotToRegister = findViewById(R.id.gotoregister);
 
+        Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+        intent.putExtra("UserType", userType);
+
         gotToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (intent.getStringExtra("UserType").equals("PATIENT")) {
-                    startActivity(new Intent(LoginActivity.this, PatientRegister.class));
-                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                    finish();
-                } else if (intent.getStringExtra("UserType").equals("")) {
-                    startActivity(new Intent(LoginActivity.this, DoctorRegister.class));
-                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                    finish();
+                String userType = intent.getStringExtra("UserType");
+                if (userType != null) {
+                    if (userType.equals("PATIENT")) {
+                        startActivity(new Intent(LoginActivity.this, PatientRegister.class));
+                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        finish();
+                    } else if (userType.equals("DOCTOR")) {
+                        startActivity(new Intent(LoginActivity.this, DoctorRegister.class));
+                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        finish();
+                    }
                 }
             }
         });
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
-//        logInButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (isValid()) {
-//                    progressDialog.setMessage("Authenticating, please wait...");
-//                    progressDialog.show();
-//                    FirebaseAuth.getInstance().signInWithEmailAndPassword(EmailTB.getEditText().getText().toString().trim(), PassTB.getEditText().getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<AuthResult> task) {
-//                            if (task.isSuccessful()) {
-//
-//
-//                                if (FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
-//                                    if () {
-//                                        progressDialog.dismiss();
-//                                        startActivity(new Intent(LoginActivity.this, PatientMainActivity.class));
-//                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                                        finish();
-//                                    } else if () {
-//                                        progressDialog.dismiss();
-//                                        startActivity(new Intent(LoginActivity.this, DoctorMainActivity.class));
-//                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                                        finish();
-//                                    } else {
-//                                        progressDialog.dismiss();
-//                                        startActivity(new Intent(LoginActivity.this, AskDoctorPatient.class));
-//                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                                        finish();
-//                                    }
-//                                } else {
-//                                    progressDialog.dismiss();
-//                                    AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-//                                    alertDialog.setTitle("Incomplete Activation");
-//                                    alertDialog.setMessage("It seems that you haven't completed the verification phase in activation process, please click the verification link sent to your email, do you want re-send the link?");
-//                                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-//                                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            try {
-//                                                FirebaseAuth.getInstance().signOut();
-//                                            } catch (Exception e) {
-//                                            }
-//                                            dialog.dismiss();
-//                                        }
-//                                    });
-//                                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Resend", new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            dialog.dismiss();
-//                                            progressDialog.setMessage("Sending link, please wait...");
-//                                            progressDialog.show();
-//                                            FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                                @Override
-//                                                public void onComplete(@NonNull Task<Void> task) {
-//                                                    if (task.isSuccessful()) {
-//                                                        progressDialog.dismiss();
-//                                                        try {
-//                                                            FirebaseAuth.getInstance().signOut();
-//                                                        } catch (Exception e) {
-//                                                        }
-//                                                        ReusableFunctionsAndObjects.showMessageAlert(LoginActivity.this, "Verify", "A verification link has been sent to " + EmailTB.getEditText().getText().toString().trim() + ".Please click and verify to activate your account", "OK", (byte) 1);
-//                                                    } else {
-//                                                        progressDialog.dismiss();
-//                                                        try {
-//                                                            FirebaseAuth.getInstance().signOut();
-//                                                        } catch (Exception e) {
-//                                                        }
-//                                                        ReusableFunctionsAndObjects.showMessageAlert(LoginActivity.this, "Network Error", "Unable to login, Make sure you are connected to internet", "OK", (byte) 0);
-//                                                    }
-//                                                }
-//                                            }).addOnFailureListener(new OnFailureListener() {
-//                                                @Override
-//                                                public void onFailure(@NonNull Exception e) {
-//                                                    progressDialog.dismiss();
-//                                                    ReusableFunctionsAndObjects.showMessageAlert(LoginActivity.this, "Network Error", "Unable to login, Make sure you are connected to internet", "OK", (byte) 0);
-//                                                }
-//                                            });
-//                                        }
-//                                    });
-//                                    alertDialog.show();
-//                                }
-//                            } else {
-//                                progressDialog.dismiss();
-//                                try {
-//                                    throw task.getException();
-//                                } catch (FirebaseAuthInvalidUserException invalidEmail) {
-//                                    ReusableFunctionsAndObjects.showMessageAlert(LoginActivity.this, "Invalid User", "Account does'nt exists. Make sure you have activated your account", "OK", (byte) 0);
-//                                } catch (FirebaseAuthInvalidCredentialsException wrongPassword) {
-//                                    ReusableFunctionsAndObjects.showMessageAlert(LoginActivity.this, "Invalid Password", "Your password is incorrect", "OK", (byte) 0);
-//                                } catch (Exception e) {
-//                                    ReusableFunctionsAndObjects.showMessageAlert(LoginActivity.this, "Network Error", "Unable to login, Make sure you are connected to internet", "OK", (byte) 0);
-//                                }
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//        });
 
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
