@@ -58,7 +58,7 @@ public class PendingAppointmentAdapter extends RecyclerView.Adapter<PendingAppoi
         PatientAppointmentRequest request = appointmentRequestList.get(position);
         holder.doc_name.setText(request.getName());
         holder.spl.setText("Specialization: " + request.getSpecialization());
-        String dateTimeString = "9/5/2024 3:04 PM";
+        String dateTimeString = request.getDateAndTime();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy h:mm a", Locale.US);
         Date date = null;
         try {

@@ -31,6 +31,7 @@ public class FixAppointment extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private int d = 0,m=0,y=0,min=0,h=0;
     private HashMap<String,String> hashMap;
+    public static Boolean isSHowAppointments=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +133,7 @@ public class FixAppointment extends AppCompatActivity {
                         hashMap.put("DoctorAppointKey",dockey);
                         String key=FirebaseDatabase.getInstance().getReference().child("PendingPatientAppointments").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
                         hashMap.put("PatientAppointKey",key);
+                        hashMap.put("PatientID",FirebaseAuth.getInstance().getCurrentUser().getUid());
                         FirebaseDatabase.getInstance().getReference().child("PendingPatientAppointments").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -150,6 +152,8 @@ public class FixAppointment extends AppCompatActivity {
                                             if(task.isSuccessful()){
                                                 progressDialog.dismiss();
                                                 ReusableFunctionsAndObjects.showMessageAlert(FixAppointment.this, "Completed", "Appointment has been requested to Dr. "+name+" on "+date.getText()+" at "+time.getText()+". Check status in pending appointments.", "OK",(byte)1);
+                                                isSHowAppointments = true;
+                                                finish();
                                             }else{
                                                 progressDialog.dismiss();
                                                 ReusableFunctionsAndObjects.showMessageAlert(FixAppointment.this, "Network Error", "Make sure you are connected to internet.", "OK",(byte)0);

@@ -70,7 +70,7 @@ public class AppointmentRequestAdapter  extends RecyclerView.Adapter<Appointment
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            FirebaseDatabase.getInstance().getReference().child("PendingDocAppointments").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(appointmentRequest.getDoctorAppointKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            FirebaseDatabase.getInstance().getReference().child("PendingDocAppointments").child("1").child(appointmentRequest.getDoctorAppointKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if(task.isSuccessful()){
@@ -135,6 +135,7 @@ public class AppointmentRequestAdapter  extends RecyclerView.Adapter<Appointment
                                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                                     if(task.isSuccessful()){
                                                                                         progressDialog.dismiss();
+                                                                                        FirebaseDatabase.getInstance().getReference().child("PendingDocAppointments").child("1").child(appointmentRequest.getDoctorAppointKey()).removeValue();
                                                                                         Toast.makeText(context, "Accepted", Toast.LENGTH_SHORT).show();
                                                                                         ((DoctorMainActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_Container, new AppointmentRequestFragment(),"Appointment Requests").addToBackStack(null).commit();
                                                                                     }else {
