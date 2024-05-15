@@ -65,7 +65,7 @@ public class AppointmentRequestFragment extends Fragment {
 //        });
         FirebaseDatabase.getInstance().getReference()
                 .child("PendingDocAppointments")
-                .child("1")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

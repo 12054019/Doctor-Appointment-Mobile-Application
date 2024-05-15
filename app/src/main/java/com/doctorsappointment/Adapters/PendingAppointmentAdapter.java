@@ -36,14 +36,14 @@ public class PendingAppointmentAdapter extends RecyclerView.Adapter<PendingAppoi
 
     private Context context;
     private List<PatientAppointmentRequest> appointmentRequestList;
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
 
     public PendingAppointmentAdapter(Context context, List<PatientAppointmentRequest> appointmentRequestList) {
         this.context = context;
         this.appointmentRequestList = appointmentRequestList;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setCancelable(false);
+//        progressDialog = new ProgressDialog(context);
+//        progressDialog.setCanceledOnTouchOutside(false);
+//        progressDialog.setCancelable(false);
     }
 
     @NonNull
@@ -90,8 +90,8 @@ public class PendingAppointmentAdapter extends RecyclerView.Adapter<PendingAppoi
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                progressDialog.setMessage("Cancelling...");
-                                progressDialog.show();
+//                                progressDialog.setMessage("Cancelling...");
+//                                progressDialog.show();
                                 FirebaseDatabase.getInstance().getReference().child("PendingDocAppointments").child(request.getDocID()).child(request.getDoctorAppointKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -100,30 +100,30 @@ public class PendingAppointmentAdapter extends RecyclerView.Adapter<PendingAppoi
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
-                                                        progressDialog.dismiss();
+//                                                        progressDialog.dismiss();
                                                         Toast.makeText(context, "Cancelled", Toast.LENGTH_SHORT).show();
                                                         ((PatientMainActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_Container, new PendingAppointmentFragment(), "Pending Appointments").addToBackStack(null).commit();
                                                     } else {
-                                                        progressDialog.dismiss();
+//                                                        progressDialog.dismiss();
                                                         ReusableFunctionsAndObjects.showMessageAlert(context, "Network Error", "Make sure you are connected to internet.", "OK", (byte) 0);
                                                     }
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    progressDialog.dismiss();
+//                                                    progressDialog.dismiss();
                                                     ReusableFunctionsAndObjects.showMessageAlert(context, "Network Error", "Make sure you are connected to internet.", "OK", (byte) 0);
                                                 }
                                             });
                                         } else {
-                                            progressDialog.dismiss();
+//                                            progressDialog.dismiss();
                                             ReusableFunctionsAndObjects.showMessageAlert(context, "Network Error", "Make sure you are connected to internet.", "OK", (byte) 0);
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        progressDialog.dismiss();
+//                                        progressDialog.dismiss();
                                         ReusableFunctionsAndObjects.showMessageAlert(context, "Network Error", "Make sure you are connected to internet.", "OK", (byte) 0);
                                     }
                                 });

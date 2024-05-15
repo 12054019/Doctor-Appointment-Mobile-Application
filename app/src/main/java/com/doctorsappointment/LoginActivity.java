@@ -146,7 +146,8 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 if (currentUser != null && currentUser.isEmailVerified()) {
-                                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("UserDetails").child(currentUser.getUid());
+                                    String userType =getIntent().getStringExtra("UserType");
+                                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child(userType.equals("PATIENT") ? "UserDetails" : "DoctorDetails").child(currentUser.getUid());
                                     userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

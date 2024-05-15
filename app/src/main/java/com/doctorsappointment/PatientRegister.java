@@ -3,6 +3,7 @@ package com.doctorsappointment;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -20,84 +22,105 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hbb20.CountryCodePicker;
+
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class PatientRegister extends AppCompatActivity {
 
-    private TextInputLayout FirstNameTB,LastNameTB,MobileNoTB,EmailTB,PassTB,ConfirmPassTB;
+    private TextInputLayout FirstNameTB, LastNameTB, MobileNoTB, EmailTB, PassTB, ConfirmPassTB,SpecializationTB;
     private CountryCodePicker ccp;
     private AppCompatButton register;
     private ProgressDialog progressDialog;
     private TextView goToLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_register);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        FirstNameTB=findViewById(R.id.FirstNameTB);
-        LastNameTB=findViewById(R.id.LastNameTB);
-        MobileNoTB=findViewById(R.id.PhoneTB);
-        EmailTB=findViewById(R.id.EmailTB);
-        PassTB=findViewById(R.id.PassTB);
-        ConfirmPassTB=findViewById(R.id.ConfirmPassTB);
-        ccp=findViewById(R.id.ccp);
-        goToLogin=findViewById(R.id.gotosign);
+        FirstNameTB = findViewById(R.id.FirstNameTB);
+        LastNameTB = findViewById(R.id.LastNameTB);
+        SpecializationTB = findViewById(R.id.SpecializationTB);
+        MobileNoTB = findViewById(R.id.PhoneTB);
+        EmailTB = findViewById(R.id.EmailTB);
+        PassTB = findViewById(R.id.PassTB);
+        ConfirmPassTB = findViewById(R.id.ConfirmPassTB);
+        ccp = findViewById(R.id.ccp);
+        goToLogin = findViewById(R.id.gotosign);
         addKeyListenerToTextInputLayout(FirstNameTB);
+        addKeyListenerToTextInputLayout(SpecializationTB);
         addKeyListenerToTextInputLayout(LastNameTB);
         addKeyListenerToTextInputLayout(MobileNoTB);
         addKeyListenerToTextInputLayout(EmailTB);
         addKeyListenerToTextInputLayout(PassTB);
         addKeyListenerToTextInputLayout(ConfirmPassTB);
-        register=findViewById(R.id.register);
+        register = findViewById(R.id.register);
+        String userType = getIntent().getStringExtra("UserType");
+        if (userType.equals("DOCTOR")){
+            SpecializationTB.setVisibility(View.VISIBLE);
+        }
         progressDialog = new ProgressDialog(this);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
         goToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PatientRegister.this, LoginActivity.class).putExtra("UserType","PATIENT"));
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                startActivity(new Intent(PatientRegister.this, LoginActivity.class).putExtra("UserType", userType));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
             }
         });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isValid()){
-                    String email=EmailTB.getEditText().getText().toString().trim();
-                    String pass=PassTB.getEditText().getText().toString().trim();
-                    String firstName=FirstNameTB.getEditText().getText().toString().trim();
-                    String lastName=LastNameTB.getEditText().getText().toString().trim();
-                    String mobileNo=MobileNoTB.getEditText().getText().toString().trim();
+                if (isValid()) {
+                    String email = EmailTB.getEditText().getText().toString().trim();
+                    String pass = PassTB.getEditText().getText().toString().trim();
+                    String firstName = FirstNameTB.getEditText().getText().toString().trim();
+                    String lastName = LastNameTB.getEditText().getText().toString().trim();
+                    String specialization = SpecializationTB.getEditText().getText().toString().trim();
+                    String mobileNo = MobileNoTB.getEditText().getText().toString().trim();
                     progressDialog.setMessage("Registering, please wait...");
                     progressDialog.show();
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass).addOnCompleteListener(PatientRegister.this, new OnCompleteListener<AuthResult>() {
+                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass).addOnCompleteListener(PatientRegister.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        HashMap<String,String> hashMap=new HashMap<>();
-                                        hashMap.put("Email",email);
-                                        hashMap.put("MobileNo",ccp.getSelectedCountryCodeWithPlus()+mobileNo);
-                                        hashMap.put("FirstName",firstName);
-                                        hashMap.put("LastName",lastName);
-                                        hashMap.put("UserType","PATIENT");
-                                        FirebaseDatabase.getInstance().getReference().child("UserDetails").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        HashMap<String, String> hashMap = new HashMap<>();
+                                        hashMap.put("Email", email);
+                                        hashMap.put("MobileNo", ccp.getSelectedCountryCodeWithPlus() + mobileNo);
+                                        hashMap.put("FirstName", firstName);
+                                        hashMap.put("LastName", lastName);
+                                        hashMap.put("UserType", userType);
+                                        if (userType.equals("DOCTOR")) {
+                                            hashMap.put("Specialization", specialization.isEmpty()?"Cardiologist":specialization);
+                                            hashMap.put("Id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                            hashMap.put("Address", "123 Main Street");
+                                            hashMap.put("City", "Cityville");
+                                        }
+                                        FirebaseDatabase.getInstance().getReference().child(userType.equals("PATIENT") ? "UserDetails" : "DoctorDetails").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 progressDialog.dismiss();
-                                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Partially Completed", "To complete the registration click the verification link sent to you email ("+email+").","OK", (byte) 1);
-                                                try{FirebaseAuth.getInstance().signOut();}catch (Exception e){}
+                                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Partially Completed", "To complete the registration click the verification link sent to you email (" + email + ").", "OK", (byte) 1);
+                                                try {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                } catch (Exception e) {
+                                                }
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 progressDialog.dismiss();
-                                                try{FirebaseAuth.getInstance().signOut();}catch (Exception SS){}
-                                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Network Error", "Could'nt register, Please make sure you are connected with internet","OK", (byte) 0);
+                                                try {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                } catch (Exception SS) {
+                                                }
+                                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Network Error", "Could'nt register, Please make sure you are connected with internet", "OK", (byte) 0);
                                             }
                                         });
                                     }
@@ -105,23 +128,23 @@ public class PatientRegister extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         progressDialog.dismiss();
-                                        ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Network Error", "Could'nt register, Please make sure you are connected with internet","OK", (byte) 0);
+                                        ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Network Error", "Could'nt register, Please make sure you are connected with internet", "OK", (byte) 0);
                                     }
                                 });
                             } else {
-                            try {
-                                throw task.getException();
-                            } catch (FirebaseAuthWeakPasswordException weakPassword) {
-                                progressDialog.dismiss();
-                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Weak Password", "Your password is weak","OK", (byte) 0);
-                            } catch (FirebaseAuthUserCollisionException existEmail) {
-                                progressDialog.dismiss();
-                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Error in Registration",  "This email is already registered","OK", (byte) 0);
-                            } catch (Exception e) {
-                                progressDialog.dismiss();
-                                ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Network Error", "Could'nt register, Please make sure you are connected with internet","OK", (byte) 0);
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthWeakPasswordException weakPassword) {
+                                    progressDialog.dismiss();
+                                    ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Weak Password", "Your password is weak", "OK", (byte) 0);
+                                } catch (FirebaseAuthUserCollisionException existEmail) {
+                                    progressDialog.dismiss();
+                                    ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Error in Registration", "This email is already registered", "OK", (byte) 0);
+                                } catch (Exception e) {
+                                    progressDialog.dismiss();
+                                    ReusableFunctionsAndObjects.showMessageAlert(PatientRegister.this, "Network Error", "Could'nt register, Please make sure you are connected with internet", "OK", (byte) 0);
+                                }
                             }
-                        }
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -145,6 +168,7 @@ public class PatientRegister extends AppCompatActivity {
             }
         });
     }
+
     protected boolean isValid() {
         boolean ispass1fill = false, ispass2fill = false, isemailvalid = false, isphonevalid = false, ispasswordsvalid = false;
 
@@ -213,8 +237,8 @@ public class PatientRegister extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(PatientRegister.this,PatientLoginRegisterChoice.class));
-        overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+        startActivity(new Intent(PatientRegister.this, PatientLoginRegisterChoice.class));
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 }
