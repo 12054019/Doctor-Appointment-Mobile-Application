@@ -11,9 +11,9 @@ https://firebase.google.com/docs/auth/android/start
 USe Below credentials For app test
 
 Doctor
-fesoso2099@facais.com
-Test@123
+tim.pouniu@cqumail.com
+test123
 
 PATIENT
-cicete9913@godsigma.com
-Test@123
+tim.pouniu@yahoo.com
+test123
